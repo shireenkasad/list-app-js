@@ -1,13 +1,76 @@
 <!DOCTYPE HTML>
-<html>
-<head>
-<meta charset="utf-8">
-<title>layout</title>
-<script type="text/javascript" src="main.js"></script>
-</head>
+<html class="app">
 
-<body>
+	<head>
+	    <meta charset="utf-8">
+	    <title>layout</title>
+	    <script type="text/javascript" src="main.js"></script>
+	    <style>
+	    	html, body{
+	    		margin:0;
+	    		padding:0;
+	    	}
+	    	.todo-list{
+	    		width:800px;
+	    		margin:0 auto;
+	    	}
+	    	.list-item{
+	    		padding:15px;
+	    		background-color:rgba(0,0,0,.1);
+	    	}
+	    	.list-item:after{
+	    		clear:both;
+	    		content:'';
+	    		display:table;
+	    	}
+	    	.list-item__label{
+	    		float:left;
+	    		width:80%;
+	    	}
+	    	.list-item__controls{
+	    		float:right;
+	    		width:20%;
+	    	}
+	    	.todo-list__entry-form{
+	    		margin-bottom:50px;
+	    		background-color:#CCC;
+	    		padding:25px;
+	    	}
+	    	.app__templates{
+	    		display:none;
+	    	}
+	    </style>
+	</head>
 
-</body>
+	<body>
+	<div class="main">
+		<div class="todo-list">
+			<div class="todo-list__entry-form">
+				<div class="entry-form__input"><input name="label"></div>
+				<div class="entry-form__controls"><button class="entry-form__controls-add">add</button></div>
+			</div>
+			<div class="todo-list__list">
+		        <div class="list-item">
+		            <div class="list-item__label">Label</div>
+		            <div class="list-item__controls">
+		            	<button class="list-item_controls-edit">edit</button>
+		            	<button class="list-item_controls-edit">delete</button>
+		            </div>
+		        </div>
+			</div>
+		</div>
+	</div>
+	<div class="app__templates">
+	    <div data-template-name="list-item">
+	        <div class="list-item">
+	            <div class="list-item__label">Label</div>
+	            <div class="list-item__controls">
+	            	<button class="list-item_controls-edit">edit</button>
+	            	<button class="list-item_controls-delete">delete</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	</body>
+
 </html>
-
