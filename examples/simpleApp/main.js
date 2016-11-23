@@ -39,7 +39,7 @@ var ListApp = {};
 		this.status = "incomplete";	
 	};
 
-	Task.prototype.get = function(){
+	Task.prototype.getItem = function(){
 		return this;
 	}
 	Task.prototype.updateStatus = function(_newStatus){
@@ -82,67 +82,43 @@ var ListApp = {};
 	}
 
 //-- Create View Classes
-	/*
-		A view should only be in charge of updating itself and any children views it has. (but updating children should be just calling their render function)
+	var listItemView = {
+		itemHTML: function(_item){
+			var listItem = document.createElement("li");
+			var listHTML = "";
+			if(_item.status === "complete"){
+				listHTML += "<input type='checkbox' checked>";
+			}
+			else {
+				listHTML += "<input type='checkbox'>";
+			}
+			listHTML += "<label>" + _item.name + "</label>";
+			listHTML += "<input type='text'><button class='edit'>Edit</button><button class='delete'>Delete</button>";
+			
+			listItem.innerHTML = listHTML;
+			todoListArea.appendChild(listItem);
 
-		In this 'listItemView' it takes in a model. Which is all the dynamic data for the element
-		the render() pulls the  attributes 'label' and 'id' to update its element. 
-		the View DOES NOT add itsself to anything. The Listview will be in charge of adding things and displaying the listItemView's element
-	*/
-	var listItemView = function(_model){
-		var _this = this;
-		_this.model = _model;
-		//Initialize
-		_this.init();
-	};
-	listItemView.prototype = {
-		init: function(){
-			/* Make Reference to this. few reasons why people do this
-				- when minifying code at the end, it will make the minify smaller
-				- if you need to reference the current class object then you can with _this
-			*/
-			var _this = this,
-				_domHolder = document.createElement("div");
-
-			//Find Template (you can also hardcode)
-			_this._htmlTemplate = $('.app__templates [data-template-name="list-item"]').html();
-
-			//add html to dom holder. we do this because we don't know what kind of element the list item will be so we cant use
-			// normla create element and the tag name. so we add the html to this container then grab the first child as the element
-			_domHolder.innerHTML = _this._htmlTemplate
-
-			//create reference to view element
-			_this.el = _domHolder.firstChild;
-
-			_this.render();
-
+			this.addHandlers();
 		},
-		addListeners: function(){
-			var _el = this.el;
-			_el.addEventListener("click", function(event) {
-				var _target = event.target;
-			    if (_target.className == "list-item_controls-edit"){
+
+		addHandlers: function(){
+			todoListArea.addEventListener("click", function(event) {
+			    if (event.target.className == "edit"){
 			    	console.log("this will edit");
+			    	if(current.innerHTML == "Edit"){
+			    		current.innerHTML = "Save";
+			    	} else {
+						current.innerHTML = "Edit";
+			    	}
 			  	}
-			  	else if (_target.className == "list-i"){
+			  	else if (event.target.className == "delete"){
 			  		console.log("this will delete");
 			  	}
-			});
+			  });
 		},
-		render: function(){
-			//Use the model to insert the correct data into the View's Element
-			var _this = this,
-				_model = _this.model,
-				_label = _model.get('label'),
-				_id = _model.get('id'),
-				qLabel = _this.el.querySelector('.list-item__label');
-			_this.el.setAttribute('data-item-id', _id);
-			qLabel.innerText = _label;
+		onEditClick: function(){ 
+			
 		}
-	};
-	//TODO: started writign listview
-	var listView = function(){
-
 	};
 	var listView = {
 		listHTML: function(_allItems){
