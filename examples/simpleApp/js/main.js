@@ -35,20 +35,37 @@ var ListApp = {};
 //-- Create Model Classes
 	//Task Model
 	var Task = function(_name, _status){
-		this.name = _name;
-		this.status = "incomplete";	
+		// Creating an internal object to hold 'Properties' or data
+		// and underscore before a name is just a practice people use to denote a private
+		// property or variable. One that shouldn't be accessed without a function like get() or set()
+		this._props = {
+			name: _name,
+			status: "incomplete"
+		};
+		/*
+			Old Code:
+
+			this.name = _name;
+			this.status = "incomplete";	
+		*/
 	};
 
-	Task.prototype.get = function(){
+	Task.prototype.get = function(_propName){
+		return this._props[_propName] || null;
+	}
+	Task.prototype.set = function(_propName, _val){
+		this._props[_propName] = _val;
 		return this;
 	}
-	Task.prototype.updateStatus = function(_newStatus){
-		this.status = _newStatus;
-	}
-	Task.prototype.updateItem = function(_newName){
-		this.name = _newName;
-	}
-
+	/*
+		Old Code:
+		Task.prototype.updateStatus = function(_newStatus){
+			this.status = _newStatus;
+		}
+		Task.prototype.updateItem = function(_newName){
+			this.name = _newName;
+		}
+	*/
 	/*
 	 * Alternative Syntax:
 
@@ -85,17 +102,18 @@ var ListApp = {};
 	/*
 		A view should only be in charge of updating itself and any children views it has. (but updating children should be just calling their render function)
 
-		In this 'listItemView' it takes in a model. Which is all the dynamic data for the element
+		In this 'ListItemView' it takes in a model. Which is all the dynamic data for the element
 		the render() pulls the  attributes 'label' and 'id' to update its element. 
-		the View DOES NOT add itsself to anything. The Listview will be in charge of adding things and displaying the listItemView's element
+		the View DOES NOT add itsself to anything. The Listview will be in charge of adding things and displaying the ListItemView's element
 	*/
-	var listItemView = function(_model){
+	var ListItemView = function(_model){
 		var _this = this;
 		_this.model = _model;
+
 		//Initialize
 		_this.init();
 	};
-	listItemView.prototype = {
+	ListItemView.prototype = {
 		init: function(){
 			/* Make Reference to this. few reasons why people do this
 				- when minifying code at the end, it will make the minify smaller
@@ -105,15 +123,15 @@ var ListApp = {};
 				_domHolder = document.createElement("div");
 
 			//Find Template (you can also hardcode)
-			_this._htmlTemplate = $('.app__templates [data-template-name="list-item"]').html();
+			console.log(document.querySelector('.app__templates [data-template-name="list-item"]'));
+			_this._htmlTemplate = document.querySelector('.app__templates [data-template-name="list-item"]').innerHTML.trim();
 
 			//add html to dom holder. we do this because we don't know what kind of element the list item will be so we cant use
 			// normla create element and the tag name. so we add the html to this container then grab the first child as the element
-			_domHolder.innerHTML = _this._htmlTemplate
+			_domHolder.innerHTML = _this._htmlTemplate;
 
 			//create reference to view element
 			_this.el = _domHolder.firstChild;
-
 			_this.render();
 
 		},
@@ -124,7 +142,7 @@ var ListApp = {};
 			    if (_target.className == "list-item_controls-edit"){
 			    	console.log("this will edit");
 			  	}
-			  	else if (_target.className == "list-i"){
+			  	else if (_target.className == "list-item_controls-delete"){
 			  		console.log("this will delete");
 			  	}
 			});
@@ -141,14 +159,15 @@ var ListApp = {};
 		}
 	};
 	//TODO: started writign listview
-	var listView = function(){
+	var ListView = function(){
 
 	};
-	var listView = {
+
+	var ListView = {
 		listHTML: function(_allItems){
 			todoListArea.innerHTML = "";
 			for(var i = 0; i<_allItems.length; i++){
-				listItemView.itemHTML(_allItems[i]);
+				ListItemView.itemHTML(_allItems[i]);
 			}
 		}
 	}
@@ -157,15 +176,15 @@ var ListApp = {};
 		list.add(task);
 		
 		var allItems = list.getAll();
-		listView.listHTML(allItems);
+		ListView.listHTML(allItems);
 		newTask.value = "";
 	}
 
 //-- Add our classes to our namespace if you want to use it in other places
 	_myNameSpace.Models.Task = Task;
 	_myNameSpace.Models.List = List;
-	_myNameSpace.Views.ListItemView = listItemView;
-	_myNameSpace.Views.ListView = listView;
+	_myNameSpace.Views.ListItemView = ListItemView;
+	_myNameSpace.Views.ListView = ListView;
 
 //-- Return the main object (optional)
 	return _myNameSpace;
@@ -174,4 +193,29 @@ var ListApp = {};
 
 
 //-- Test
-console.log(ListApp);
+	console.log(ListApp);
+	/*
+		Create a Model to hold data
+		Create a View to add to the DOM
+
+	*/
+	var testTaskModel = new ListApp.Models.Task(),
+		testListItemView = new ListApp.Views.ListItemView(testTaskModel),
+		domList = document.querySelector('body');
+
+	//Clear the body and then add the View's DOM Element to it
+	domList.innerHTML = '';
+	domList.appendChild(testListItemView.el);
+
+	// change label and render
+	testTaskModel.set('label', 'Hello World!');
+	testListItemView.render();
+
+	/*	To Illustrate how the model and view work together, 
+		Lets create an onclick to the body and change the Model's data and Render the View
+	*/
+
+	document.querySelector('html').addEventListener('click', function(){
+		testTaskModel.set('label', 'Random Number - ' + Math.random());
+		testListItemView.render();
+	});
