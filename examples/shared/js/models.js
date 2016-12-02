@@ -21,18 +21,31 @@ var SKFramework = SKFramework || {};
 
 //-- Model Class
 (function(SKFW){
-
-//-- Event Constructor
-	var Model = function(){
-		this._props = {};
-	};
-	Model.prototype = {
+//-- Helper Functions
+	// Make a nickname for the Extend function in our Utils (less to type)
+	var extend = SKFW.Utils.extend;
+//-- Model Constructor
+	// Going to use an 'extend' utility in the utils.js
+	var Model = extend(SKFW.EventDispatcher, {
+		// Special function i added to the extend helper that gets called after the model is created
+		initialize: function(){
+			this._props = [];
+		},
 		get: function(_propName){
 			return this._props[_propName] || undefined;
 		},
-		set: function(_propName){
-			return this._props[_propName] || undefined;
+		set: function(_propName, _val){
+			// Set property value
+			this._props[_propName] = _val;
+
+			// Trigger a 'change' with some info
+			this.emit('change', {target: this, prop: _propName, value: _val});
+			return this;
 		}
+	});
+	// Make a shortcut extend function
+	Model.extend = function(_classPrototype){
+		return extend(this, _classPrototype);
 	};
 
 	SKFW.Model = Model;

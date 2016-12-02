@@ -89,7 +89,7 @@ var SKFramework = SKFramework || {};
 
 
 //-- Test it
-
+/*
 	var myEventObj = new SKFramework.EventDispatcher();
 	var onObjClick = function(event){
 			console.log('I WAS CLICKED!');
@@ -102,3 +102,4 @@ var SKFramework = SKFramework || {};
 	// Trigger Event
 	myEventObj.emit('click');
 	myEventObj.emit('click', {extraData:'hello world!'});
+*/

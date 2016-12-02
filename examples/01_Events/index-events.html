@@ -10,7 +10,22 @@
 	<body>
 
 		<script type="text/javascript" src="../shared/js/events.js"></script>
+		<script>
+			//-- Test it
 
+			var myEventObj = new SKFramework.EventDispatcher();
+			var onObjClick = function(event){
+					console.log('I WAS CLICKED!');
+					console.log('THIS WAS MY EVENT RETURNED', event);
+				};
+
+			// Add Event Listener
+			myEventObj.on('click', onObjClick);
+
+			// Trigger Event
+			myEventObj.emit('click');
+			myEventObj.emit('click', {extraData:'hello world!'});
+		</script>
 	</body>
 
 </html>

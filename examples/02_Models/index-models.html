@@ -1,18 +1,29 @@
 <!DOCTYPE HTML>
 <html class="app">
 
-	<head>
-	    <meta charset="utf-8">
-	    <title>Events</title>
-	    
-	</head>
+<head>
+    <meta charset="utf-8">
+    <title>Events</title>
+    
+</head>
 
-	<body>
+<body>
 
-		<script type="text/javascript" src="../shared/js/utils.js"></script>
-		<script type="text/javascript" src="../shared/js/events.js"></script>
-		<script type="text/javascript" src="../shared/js/models.js"></script>
-
-	</body>
+	<script type="text/javascript" src="../shared/js/utils.js"></script>
+	<script type="text/javascript" src="../shared/js/events.js"></script>
+	<script type="text/javascript" src="../shared/js/models.js"></script>
+	<script>
+		var TestClass = SKFramework.Model.extend({
+			testFun: function(){}
+		})
+		var testModel = new TestClass();
+		testModel.set('var1', 'hi');
+		testModel.on('change', function(e){
+			console.log(e);
+		});
+		testModel.set('propName1', 'hi');
+		console.log(testModel)
+	</script>
+</body>
 
 </html>
