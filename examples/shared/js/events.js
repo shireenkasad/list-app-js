@@ -57,7 +57,7 @@ var SKFramework = SKFramework || {};
 
 				// remove the entire list of callbacks
 				else{
-					delete _eventList[_eventName];
+					delete _queue[_eventName];
 				}
 			}
 			return this;
