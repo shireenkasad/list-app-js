@@ -14,7 +14,6 @@
 	- We are going to build a more useful Model than just an object with properties
 	- It will get/set properties
 	- It will Extend EventDispatcher so it will inherit the ability to trigger events
-	- Create a namespace for Utils and add an 'copyObject' function
 */
 
 var SKFramework = SKFramework || {};
@@ -52,19 +51,5 @@ var SKFramework = SKFramework || {};
 }(SKFramework));
 
 
-//-- Utils copyObject
-(function(SKFW){
-	
-	function copyObject(_object, _objectExtend) {
-		for(var _key in _objectExtend){
-			_object[_key] = _objectExtend[key];
-		}
-	}
-	SKFW.Utils = SKFW.Utils || {};
-	SKFW.Utils.copyObject = copyObject;
-
-}(SKFramework));	
-
-//-- Test it
 
 	

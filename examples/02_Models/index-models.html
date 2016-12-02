@@ -12,17 +12,48 @@
 	<script type="text/javascript" src="../shared/js/utils.js"></script>
 	<script type="text/javascript" src="../shared/js/events.js"></script>
 	<script type="text/javascript" src="../shared/js/models.js"></script>
+	<script type="text/javascript" src="http://underscorejs.org/underscore.js"></script>
+	<script type="text/javascript" src="http://backbonejs.org/backbone.js"></script>
 	<script>
-		var TestClass = SKFramework.Model.extend({
-			testFun: function(){}
-		})
-		var testModel = new TestClass();
-		testModel.set('var1', 'hi');
-		testModel.on('change', function(e){
-			console.log(e);
-		});
-		testModel.set('propName1', 'hi');
-		console.log(testModel)
+
+		// Some sample of how to use our new Model class from our framework
+		var TodoItem = SKFramework.Model.extend({
+				changeStatus: function(_status){
+					if(typeof _status == "number"){
+						if(_status < 0){
+							_status = 0;
+						}else if( _status > 1){
+							_status = 1;
+						}
+						this.set('status', _status);
+					}
+					return this;
+				},
+				changeLabel: function(_label){
+					this.set('label', String(_label))
+				}
+			});
+		
+		// Lets now make some TodoItems
+		var todoItem1 = new TodoItem(),
+			todoItem2 = new TodoItem(),
+			listenercallback = function(e){
+				console.log('item changed!', e.prop, e.value);
+			};
+
+		// Add Event Listeners
+		todoItem1.on('change', listenercallback);
+		todoItem2.on('change', listenercallback);
+
+		//Test it!
+		todoItem1.changeStatus(1);
+		todoItem2.changeStatus(0);
+
+		todoItem1.changeLabel('Buying new laptop');
+		todoItem2.changeLabel('Go to museum');
+
+		
+		
 	</script>
 </body>
 
