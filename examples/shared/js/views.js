@@ -44,7 +44,7 @@ var SKFramework = SKFramework || {};
 			// set View's new DOM element 
 			this.el = el;
 
-		}
+		},
 		events:{
 
 		},
