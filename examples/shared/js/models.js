@@ -27,8 +27,12 @@ var SKFramework = SKFramework || {};
 	// Going to use an 'extend' utility in the utils.js
 	var Model = extend(SKFW.EventDispatcher, {
 		// Special function i added to the extend helper that gets called after the model is created
-		initialize: function(){
-			this._props = [];
+		constructor: function(){
+			// Call Parent Constructor
+			SKFW.EventDispatcher.apply(this, arguments);
+
+			// Set internal property to hold public Model properties
+			this._props = {};
 		},
 		get: function(_propName){
 			return this._props[_propName] || undefined;
