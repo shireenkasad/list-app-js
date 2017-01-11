@@ -12,6 +12,19 @@
 <body>
 	Open your console (F12)
 	<script type="text/javascript" src="./js/01_ConsoleApp.js"></script>
+	<script>
+		//Example:
+		app.render();
+		app.addTodo('Go to store', 0);
+		app.addTodo('Buy birthday cake', 0);
+		app.addTodo('Go to gym', 0);
+		app.addTodo('Do javascript excercise', 0);
+
+		app.getTodoByIndex(1).set('status', 1);
+
+		app.render();
+		// You can do more tests in the console
+	</script>
 </body>
 
 </html>
