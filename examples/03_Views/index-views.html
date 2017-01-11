@@ -4,15 +4,23 @@
 <head>
     <meta charset="utf-8">
     <title>Views</title>
-    
+    <style>
+	    #label-edit { display: none; }
+	    #status-edit { display: none; }
+    </style>
 </head>
 
 <body>
+	
+	<div id="input-row1">New Label <input type="text"></div>
+	<div id="input-row2">New Status <input type="text"></div>
+	<button id="add">Add</button>
 	<ul id="todo-list">
-		<li></li>
+		
 	</ul>
-	<div id="input-row1">New Label <input type="text"><button>Update</button></div>
-	<div id="input-row2">New Status<input type="text"><button>Update</button></div>
+
+
+
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script type="text/javascript" src="../shared/js/utils.js"></script>
 	<script type="text/javascript" src="../shared/js/events.js"></script>
@@ -57,31 +65,68 @@
 				this.setElement(_el);
 				// Binding all listeners to this class (its a weird javascript thing for convience)
 				this.onInputChange1 = this.onInputChange1.bind(this);
-				this.onInputChange2 = this.onInputChange2.bind(this);
-				this.render = this.render.bind(this);
 
+				this.onDelete = this.onDelete.bind(this);
+				this.onUpdate = this.onUpdate.bind(this);
+
+				this.render = this.render.bind(this);
 				this.addListeners();
-			},
-			addListeners: function(){
-				$(this.el).on('input', '#input-row1 input', this.onInputChange1);
-				$(this.el).on('input', '#input-row2 input', this.onInputChange2);
-				todoItem1.on('change', this.render);
-			},
-			onInputChange1: function(event){
-				todoItem1.set('label', this.el.querySelector('#input-row1 input').value);
+
 				
 			},
-			onInputChange2: function(event){
+			addListeners: function(){
+			
+			},
+			onInputChange1: function(event){
+				// set the new todo, initialize here?
+				var todoItem1 = new MyView();
+				todoItem1.set('label', this.el.querySelector('#input-row1 input').value);
 				todoItem1.set('status', this.el.querySelector('#input-row2 input').value);
+				this.el.querySelector('#input-row1 input').value = '';
+				this.el.querySelector('#input-row2 input').value = '';
+				
+				
+			},
 
+			onDelete: function(event){
+				var itemLI = event.target.parentNode;
+				var parentLI = itemLI.parentNode;
+				parentLI.removeChild(itemLI);
 			},
 			render: function(){
-				this.el.querySelector('#todo-list li').innerHTML = todoItem1.get('label') + ' - ' + todoItem1.get('status');
+				//create a new li with todo data
+				var newLI = document.createElement('li');
+				newLI.innerHTML = '<span id="label">' + todoItem1.get('label') + '</span><input id="label-edit"> - <span id="status">'  + todoItem1.get('status') + '</span> <input id="status-edit"><button id="update">Update</button>' + ' <button id="delete">Delete</button>';
+				return newLI;
+
+			}
+		})
+
+		var AppView = SKFramework.View.extend({
+			initialize: function(_el){
+				this.setElement(_el);
+				
+
+				this.render = this.render.bind(this);
+				this.addListeners();	
+				
+			},
+			addListeners: function(){
+				// on add, create a new todo
+				$(this.el).on('click', '#add', this.onInputChange1);
+				$(this.el).on('click', '#delete', this.onDelete);
+			},
+
+			
+			render: function(){
+				//call todo render
+				// add todo to dom
+
 			}
 		})
 		
 		//create new instance of myview
-		var myViewObj = new MyView(document.body);
+		var myViewObj = new AppView(document.body);
 
 	</script>
 </body>
