@@ -62,41 +62,14 @@
 		// Lets create a view
 		var MyView = SKFramework.View.extend({
 			initialize: function(_el){
-				this.setElement(_el);
-				// Binding all listeners to this class (its a weird javascript thing for convience)
-				this.onInputChange1 = this.onInputChange1.bind(this);
-
-				this.onDelete = this.onDelete.bind(this);
-				this.onUpdate = this.onUpdate.bind(this);
-
 				this.render = this.render.bind(this);
-				this.addListeners();
-
-				
 			},
-			addListeners: function(){
 			
-			},
-			onInputChange1: function(event){
-				// set the new todo, initialize here?
-				var todoItem1 = new MyView();
-				todoItem1.set('label', this.el.querySelector('#input-row1 input').value);
-				todoItem1.set('status', this.el.querySelector('#input-row2 input').value);
-				this.el.querySelector('#input-row1 input').value = '';
-				this.el.querySelector('#input-row2 input').value = '';
-				
-				
-			},
-
-			onDelete: function(event){
-				var itemLI = event.target.parentNode;
-				var parentLI = itemLI.parentNode;
-				parentLI.removeChild(itemLI);
-			},
 			render: function(){
-				//create a new li with todo data
+				console.log("i got called!");
 				var newLI = document.createElement('li');
-				newLI.innerHTML = '<span id="label">' + todoItem1.get('label') + '</span><input id="label-edit"> - <span id="status">'  + todoItem1.get('status') + '</span> <input id="status-edit"><button id="update">Update</button>' + ' <button id="delete">Delete</button>';
+				newLI.innerHTML = '<span id="label">' + todoItem1.get('label') + '</span> - <span id="status">'  + todoItem1.get('status') + '</span>' + ' <button id="delete">Delete</button>';
+				console.log(newLI);
 				return newLI;
 
 			}
@@ -105,26 +78,36 @@
 		var AppView = SKFramework.View.extend({
 			initialize: function(_el){
 				this.setElement(_el);
-				
-
+				this.addTodo = this.addTodo.bind(this);
+				this.onDelete = this.onDelete.bind(this);
 				this.render = this.render.bind(this);
-				this.addListeners();	
-				
+				this.addListeners();
 			},
 			addListeners: function(){
-				// on add, create a new todo
-				$(this.el).on('click', '#add', this.onInputChange1);
-				$(this.el).on('click', '#delete', this.onDelete);
+				$(this.el).on('click', '#add', this.addTodo);
+				//$(this.el).on('click', '#delete', this.onDelete);
 			},
-
-			
+			addTodo: function(){
+				todoItem1.set('label', this.el.querySelector('#input-row1 input').value);
+				todoItem1.set('status', this.el.querySelector('#input-row2 input').value);
+				this.el.querySelector('#input-row1 input').value = '';
+				this.el.querySelector('#input-row2 input').value = '';
+				this.render();
+			},
+			onDelete: function(event){
+				//var itemLI = event.target.parentNode;
+				//var parentLI = itemLI.parentNode;
+				//parentLI.removeChild(itemLI);
+			},
 			render: function(){
 				//call todo render
-				// add todo to dom
+				var newView = new MyView(document.querySelector('#todo-list'));
+				this.el.appendChild(newView.render());
 
 			}
 		})
 		
+
 		//create new instance of myview
 		var myViewObj = new AppView(document.body);
 
