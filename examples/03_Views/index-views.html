@@ -64,12 +64,21 @@
 			initialize: function(_el, model){
 				this.setElement(_el);
 				this.render = this.render.bind(this);
+				this.onDelete = this.onDelete.bind(this);
 				this.model = model;
 
 				this.addListeners();
 			},
 			addListeners: function(){
+				$(this.el).on('click', '#delete', this.onDelete); 
 				this.model.on('change', this.render); 
+			},
+			onDelete: function(){
+				var indexToRemove = myViewObj.getIndexOfView(this);
+				myViewObj.deleteViewByIndex(indexToRemove);
+
+				var parentEl = this.el.parentNode;
+				parentEl.removeChild(this.el);
 			},
 			render: function(){
 				this.el.innerHTML = '<span id="label">' + this.model.get('label') + '</span> - <span id="status">'  + this.model.get('status') + '</span>' + ' <button id="delete">Delete</button>';
@@ -88,6 +97,7 @@
 			},
 			addListeners: function(){
 				$(this.el).on('click', '#add', this.createOnClick); 
+				//$(this.el).on('click', '#delete', this.somethingChanged);
 			},
 			createOnClick: function(){
 				// create a model and set it
@@ -103,6 +113,13 @@
 				this.todoList.push(this.newView);
 				this.el.querySelector('#todo-list').appendChild(this.newView.render());
 			},
+			getIndexOfView: function(_view){
+				return this.todoList.indexOf(_view);	
+			},
+			deleteViewByIndex: function(_index){
+				this.todoList.splice(_index, 1);
+				console.log(this.todoList);
+			},
 			render: function(){
 				this.el.querySelector('#todo-list').innerHTML = '';
 				for(var i=0; i<this.todoList.length; i++){
@@ -117,6 +134,11 @@
 		// on change of model, the todo view should update itself
 
 		// render should update its DOM element (this.el)
+
+		// add an event listener to the delete button
+		// on click, 
+		// remove 'this view' from todoList array
+
 
 		//create new instance of myview
 		var myViewObj = new AppView(document.body);
