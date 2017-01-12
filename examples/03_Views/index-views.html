@@ -61,13 +61,19 @@
 		
 		// Lets create a view
 		var MyView = SKFramework.View.extend({
-			initialize: function(_el){
+			initialize: function(_el, model){
+				this.setElement(_el);
 				this.render = this.render.bind(this);
+				this.model = model;
+
+				this.addListeners();
 			},
-			render: function(item){
-				var newLI = document.createElement('li');
-				newLI.innerHTML = '<span id="label">' + item.get('label') + '</span> - <span id="status">'  + item.get('status') + '</span>' + ' <button id="delete">Delete</button>';
-				return newLI;
+			addListeners: function(){
+				this.model.on('change', this.render); 
+			},
+			render: function(){
+				this.el.innerHTML = '<span id="label">' + this.model.get('label') + '</span> - <span id="status">'  + this.model.get('status') + '</span>' + ' <button id="delete">Delete</button>';
+				return this.el;
 			}
 		})
 
@@ -76,41 +82,41 @@
 				this.setElement(_el);
 				this.createOnClick = this.createOnClick.bind(this);
 				this.render = this.render.bind(this);
-				this.addTodo = this.addTodo.bind(this);
 				
 				this.todoList = [];
-				this.listHTML = document.querySelector('#todo-list');
 				this.addListeners();
 			},
 			addListeners: function(){
 				$(this.el).on('click', '#add', this.createOnClick); 
 			},
 			createOnClick: function(){
+				// create a model and set it
 				var todoItem1 = new TodoItem();
 				todoItem1.set('label', this.el.querySelector('#input-row1 input').value);
 				todoItem1.set('status', this.el.querySelector('#input-row2 input').value);
 				this.el.querySelector('#input-row1 input').value = '';
 				this.el.querySelector('#input-row2 input').value = '';
 
-				this.todoList.push(todoItem1);
-
-				this.render();
-			},
-			addTodo: function(todo){
-				this.newView = new MyView(document.querySelector('#todo-list'));
-				var renderedLI = this.newView.render(todo);
-				return renderedLI;
+				// create a view, add to an array of views, render and add to DOM
+				var newListElement = document.createElement('li');
+				this.newView = new MyView(newListElement, todoItem1);
+				this.todoList.push(this.newView);
+				this.el.querySelector('#todo-list').appendChild(this.newView.render());
 			},
 			render: function(){
-				this.listHTML.innerHTML = '';
+				this.el.querySelector('#todo-list').innerHTML = '';
 				for(var i=0; i<this.todoList.length; i++){
-					var listThing = this.addTodo(this.todoList[i]);
-					this.listHTML.appendChild(listThing);	
+					this.el.querySelector('#todo-list').appendChild(this.todoList[i].render());	
 				}
-
 			}
 		})
-		
+
+		// create a new model
+		// set the model
+
+		// on change of model, the todo view should update itself
+
+		// render should update its DOM element (this.el)
 
 		//create new instance of myview
 		var myViewObj = new AppView(document.body);
