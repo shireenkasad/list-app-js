@@ -60,6 +60,12 @@
 
 		
 		// Lets create a view
+		/*
+			Notes:
+			- Ideal a view only knows about itself and/or the objects you pass to it
+			- If you reference specific variables outside the class then you can't reuse it in other projects or other parts of your current app
+			- The onDelete function is referencing a glboal variable that may or may not exist and will give an error if it doesnt exist
+		*/
 		var MyView = SKFramework.View.extend({
 			initialize: function(_el, model){
 				this.setElement(_el);
