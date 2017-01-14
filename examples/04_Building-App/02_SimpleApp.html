@@ -11,17 +11,24 @@
 
 <body>
 	<div id="main">
-		<h1>My First App</h1>
-		<h3>My Todo's</h3>
-		<ul class="todo-list">
-			
-		</ul>
-		<div class="todo-controls">
-			<input type="text" name="label">
-			<button class="todo-btn-add">Add</button>
+		
+	</div>
+	<div id="app-templates" style="display:none;">
+		<div data-template="todo-item">
+			<!-- put in markup -->
+			<div class="todo-item">
+				hello I am a todo
+			</div>
+		</div>
+		<div data-template="todo-list">
+			<!-- put in markup -->
+			hello i am a list
 		</div>
 	</div>
-	<script type="text/javascript" src="./js/02_SimpleApp.js"></script>
+	<!-- Include all app files -->
+	<script type="text/javascript" src="./js/02_SimpleApp/components/todoItem.js"></script>
+	<script type="text/javascript" src="./js/02_SimpleApp/components/app.js"></script>
+	<script type="text/javascript" src="./js/02_SimpleApp/main.js"></script>
 </body>
 
 </html>
