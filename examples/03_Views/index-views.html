@@ -79,18 +79,12 @@
 				this.addListeners();
 			},
 			addListeners: function(){
-				// listen for a click on delete
-				// emit a message saying something deleted
 				$(this.el).on('click', '#delete', this.onDelete); 
 				this.model.on('change', this.render); 
 				
 			},
 			onDelete: function(){
-				//var indexToRemove = this.otherView.getIndexOfView(this);
-				//this.otherView.deleteViewByIndex(indexToRemove);
-
-				this.emit('delete', {});
-
+				this.emit('delete', { target: this });
 				var parentEl = this.el.parentNode;
 				parentEl.removeChild(this.el);
 			},
@@ -111,10 +105,7 @@
 				this.addListeners();
 			},
 			addListeners: function(){
-				$(this.el).on('click', '#add', this.createOnClick); 
-				// listen for a something deleted
-				// remove from list
-				$(this.el).on('delete', this.onDelete);
+				$(this.el).on('click', '#add', this.createOnClick); 				
 			},
 			createOnClick: function(){
 				// create a model and set it
@@ -124,20 +115,18 @@
 				this.el.querySelector('#input-row1 input').value = '';
 				this.el.querySelector('#input-row2 input').value = '';
 
-				// create a view, add to an array of views, render and add to DOM
+				// create a view, add delete event listener, add to an array of views, render and add to DOM
 				var newListElement = document.createElement('li');
 				this.newView = new MyView(newListElement, todoItem1);
+
+				this.newView.on('delete', this.onDelete);
 				this.todoList.push(this.newView);
 				this.el.querySelector('#todo-list').appendChild(this.newView.render());
 			},
-			onDelete: function(){
-				console.log("heard you view");
-			},
-			getIndexOfView: function(_view){
-				return this.todoList.indexOf(_view);	
-			},
-			deleteViewByIndex: function(_index){
-				this.todoList.splice(_index, 1);
+			onDelete: function(event){
+				var selectedView = event.target;
+				var viewIndex = this.todoList.indexOf(selectedView);
+				this.todoList.splice(viewIndex, 1);
 				console.log(this.todoList);
 			},
 			render: function(){
@@ -147,17 +136,6 @@
 				}
 			}
 		})
-
-		// create a new model
-		// set the model
-
-		// on change of model, the todo view should update itself
-
-		// render should update its DOM element (this.el)
-
-		// add an event listener to the delete button
-		// on click, 
-		// remove 'this view' from todoList array
 
 
 		//create new instance of myview
