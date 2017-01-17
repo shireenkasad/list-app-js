@@ -12,13 +12,30 @@
 			console.log('App initialized');
 
 			//quick add a todo
-			var todoItem = new components.TodoItem();
-			this.$el.find('#main').append(todoItem.el);
+			//var todoItem = new components.TodoItem();
+			//this.$el.find('#main').append(todoItem.el);
 		},
 		events:{
+			'click #add': 'addTodo'
+		},
+		addTodo: function(){
+			// get the value of input, create a new model and set the label
+			var inputText = $('#todoInput').val();
+			var todo = new App.model.MyModel();
+			todo.set("label", inputText);
+			$('#todoInput').val('');
 
+			// DO: add the model to the collection
+
+			// create a new todo view passing in the model
+			this.todoView = new components.TodoItem({model: todo});
+
+			// (temp) append the todo view to the DOM
+			this.$el.find('#main').append(this.todoView.el);
 		},
 		render: function(){
+
+			// DO: loop through all and add to DOM
 
 		}
 	});

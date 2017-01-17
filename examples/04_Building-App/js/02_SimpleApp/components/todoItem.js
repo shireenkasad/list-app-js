@@ -15,6 +15,9 @@
 			if(!_opts || !_opts.el){
 				var $newEl = $(	$('#app-templates [data-template="todo-item"] > *:first-child').prop('outerHTML'));
 				this.setElement($newEl);
+
+				// (temp) render the div
+				$newEl.html(this.model.get("label"));
 			}
 		},
 		events:{
