@@ -31,7 +31,7 @@
 			this.todoView = new components.TodoItem({model: todo});
 
 			// (temp) append the todo view to the DOM
-			this.$el.find('#main').append(this.todoView.el);
+			this.$el.find('#main').append(this.todoView.render().el);
 		},
 		render: function(){
 

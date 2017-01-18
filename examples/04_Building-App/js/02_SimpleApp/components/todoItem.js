@@ -17,14 +17,16 @@
 				this.setElement($newEl);
 
 				// (temp) render the div
-				$newEl.html(this.model.get("label"));
+				//$newEl.html(this.model.get("label"));
 			}
+			this.listenTo(this.model, 'change', this.render);
 		},
 		events:{
 
 		},
 		render: function(){
-
+			this.$el.html(this.model.get("label"));
+			return this;
 		}
 	});
 }(Backbone, jQuery))
