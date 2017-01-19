@@ -13,9 +13,14 @@
 <body>
 	
 	<div id="input-row1">New Label <input type="text"></div>
-	<div id="input-row2">New Status <input type="text"></div>
+	<!--<div id="input-row2">New Status <input type="text"></div>-->
 	<button id="add">Add</button>
+	<h3>To do: </h3>
 	<ul id="todo-list">
+		
+	</ul>
+	<h3>Completed</h3>
+	<ul id="todo-list-completed">
 		
 	</ul>
 
@@ -34,11 +39,12 @@
 		var TodoItem = SKFramework.Model.extend({
 				initialize: function(){
 					console.log('hi');
-					console.log(TodoItem.prototype.initialize)
+					console.log(TodoItem.prototype.initialize);
+					this.set('status', 0);
 				},
 				changeStatus: function(_status){
 					if(typeof _status == "number"){
-						if(_status < 0){
+						if(_status <= 0){
 							_status = 0;
 						}else if( _status > 1){
 							_status = 1;
@@ -51,14 +57,7 @@
 					this.set('label', String(_label))
 				}
 			});
-		
-		// Lets now make some TodoItems
-		
 
-		
-
-
-		
 		// Lets create a view
 		/*
 			Notes:
@@ -73,13 +72,14 @@
 				this.onDelete = this.onDelete.bind(this);
 				this.onEdit = this.onEdit.bind(this);
 				this.onSave = this.onSave.bind(this);
+				this.onStatusChange = this.onStatusChange.bind(this);
 				this.model = model;
 				this.state = {
 					mode: 'view'
 				};
 				this.templates = { 
-					view: '<span id="label"></span> - <span id="status"></span><button id="edit">Edit</button><button id="delete">Delete</button>',
-					edit: '<input id="label-edit"></span> - <span id="status"></span><button id="save">Save</button><button id="delete">Delete</button>'
+					view: '<span id="label"></span> <input id="status" type="checkbox" /> <button id="edit">Edit</button><button id="delete">Delete</button>',
+					edit: '<input id="label-edit"></span> <input id="status" type="checkbox"> <button id="save">Save</button><button id="delete">Delete</button>'
 				};
 				this.addListeners();
 			},
@@ -87,6 +87,16 @@
 				$(this.el).on('click', '#delete', this.onDelete); 
 				$(this.el).on('click', '#edit', this.onEdit); 
 				$(this.el).on('click', '#save', this.onSave); 
+				$(this.el).on('click', '#status', this.onStatusChange); 
+			},
+			onStatusChange: function(){
+				if(this.el.querySelector('input#status').checked){
+					this.model.changeStatus(1);
+				}
+				else{
+					this.model.changeStatus(0);
+				}
+				this.emit('statusChange', {target: this});
 			},
 			onEdit: function(){
 				this.emit('edit', { target: this });
@@ -113,7 +123,12 @@
 					this.el.innerHTML = this.templates.edit;
 					this.el.querySelector('#label-edit').value = this.model.get('label');
 				}
-				this.el.querySelector('#status').innerHTML = this.model.get('status');
+				if(this.model.get('status') === 1){
+					this.el.querySelector('input#status').checked = true;
+				}
+				else{
+					this.el.querySelector('input#status').checked = false;
+				}
 				return this.el;
 			}
 		})
@@ -136,9 +151,7 @@
 				// create a model and set it
 				var todoItem1 = new TodoItem();
 				todoItem1.set('label', this.el.querySelector('#input-row1 input').value);
-				todoItem1.set('status', this.el.querySelector('#input-row2 input').value);
 				this.el.querySelector('#input-row1 input').value = '';
-				this.el.querySelector('#input-row2 input').value = '';
 
 				// create a view, add delete event listener, add to an array of views, render and add to DOM
 				var newListElement = document.createElement('li');
@@ -146,6 +159,8 @@
 
 				this.newView.on('delete', this.onDelete);
 				this.newView.on('update', this.onUpdate);
+				this.newView.on('statusChange', this.onUpdate); // but this also needs to call render
+
 				this.todoList.push(this.newView);
 				this.el.querySelector('#todo-list').appendChild(this.newView.render());
 			},
@@ -160,14 +175,29 @@
 				var viewIndex = this.todoList.indexOf(selectedView);
 				this.todoList[viewIndex] = selectedView;
 				console.log(this.todoList);
+				// need to call render if 'statusChange'
 			},
 			render: function(){
 				this.el.querySelector('#todo-list').innerHTML = '';
 				for(var i=0; i<this.todoList.length; i++){
-					this.el.querySelector('#todo-list').appendChild(this.todoList[i].render());	
+					if(this.todoList[i].model.get('status') === 1){
+						this.el.querySelector('#todo-list-completed').appendChild(this.todoList[i].render());	
+					}
+					else{
+						this.el.querySelector('#todo-list').appendChild(this.todoList[i].render());	
+					}
 				}
 			}
 		})
+
+// checkbox is clicked
+// todo view listens for a click on checkbox (a change)
+// update status function
+// checks to see if checkbox is checked, if checked, update model: set status = 1, else, set status = 0
+// emits a change to model status
+// list view listens for a change to the model status
+// updates the todoList array to replace old model with updated model
+// render will now loop through todoList array checking the status of each model, and appending to the appropriate list in the DOM
 
 
 		//create new instance of myview
