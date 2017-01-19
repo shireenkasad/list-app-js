@@ -71,33 +71,22 @@
 				this.setElement(_el);
 				this.render = this.render.bind(this);
 				this.onDelete = this.onDelete.bind(this);
-				this.viewTemplate = this.viewTemplate.bind(this);
-				this.editTemplate = this.editTemplate.bind(this);
 				this.onEdit = this.onEdit.bind(this);
 				this.onSave = this.onSave.bind(this);
 				this.model = model;
 				this.state = {
 					mode: 'view'
 				};
-				this.viewTemplate();
+				this.templates = { 
+					view: '<span id="label"></span> - <span id="status"></span><button id="edit">Edit</button><button id="delete">Delete</button>',
+					edit: '<input id="label-edit"></span> - <span id="status"></span><button id="save">Save</button><button id="delete">Delete</button>'
+				};
 				this.addListeners();
 			},
 			addListeners: function(){
 				$(this.el).on('click', '#delete', this.onDelete); 
 				$(this.el).on('click', '#edit', this.onEdit); 
-				this.on('edit', this.editTemplate); 
 				$(this.el).on('click', '#save', this.onSave); 
-				this.on('update', this.viewTemplate); 
-				//this.model.on('change', this.render); 
-				
-			},
-			viewTemplate: function(){
-				this.viewMode = '<input id="label-edit" class="hide"><span id="label"></span> - <span id="status"></span><button id="edit">Edit</button><button id="delete">Delete</button>';
-				this.el.innerHTML = this.viewMode;
-			},
-			editTemplate: function(){
-				this.editMode = '<input id="label-edit"><span id="label" class="hide"></span> - <span id="status"></span><button id="save">Save</button><button id="delete">Delete</button>';
-				this.el.innerHTML = this.editMode;
 			},
 			onEdit: function(){
 				this.emit('edit', { target: this });
@@ -117,9 +106,11 @@
 			},
 			render: function(){
 				if(this.state.mode === 'view'){
+					this.el.innerHTML = this.templates.view;
 					this.el.querySelector('#label').innerHTML = this.model.get('label');
 				}
 				else if(this.state.mode === 'edit'){
+					this.el.innerHTML = this.templates.edit;
 					this.el.querySelector('#label-edit').value = this.model.get('label');
 				}
 				this.el.querySelector('#status').innerHTML = this.model.get('status');
