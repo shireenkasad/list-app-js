@@ -4,27 +4,9 @@
 <head>
     <meta charset="utf-8">
     <title>Views</title>
+    <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/css/weather-icons.min.css">
-     <style>
-     	body { font-family: Arial, Helvetica, sans-serif; }
-     	.content { text-align: center; }
-     	h1 { font-weight: normal; }
-     	#input-row1 { display: inline-block; vertical-align: bottom; }
-     	input { width: 150px; padding: 5px; font-size: 18px; border: 1px solid #ededed; color: #aaa; font-weight: 100; }
-		button { display: inline-block; vertical-align: bottom; margin-right: 3px; height: 33px; padding: 0 20px; border-width: 0; background-color: #ededed;  color: #666; text-transform: uppercase;}
-		button:focus, input:focus {outline:0;}
-      .city { position: relative; width: 140px; margin: -1px -1px 0 0; padding: 12px 15px; float: left; background-color:#f6f8f9; border:1px solid #bec4dd;  color: #333; text-align: center; }
-      .name { text-transform: uppercase; font-size: 13px; text-align: left;}
-      .temp { position: absolute; bottom: 0; font-size: 30px; padding: 0px 0; }
-      .description { padding: 10px; text-transform: uppercase;}
-      .humidity { position: absolute; right:0; bottom: 3px; font-size: 16px; }
-      .icon i { font-size: 50px; color:#5c91c3; }
-      .rule { width: 100%; height: 0; border-bottom: 1px solid #bec4dd; margin: 10px 0; }
-      .nums { position: relative; height: 50px; text-align: right; }
-      .delete { position: absolute; top: 0; right: 0px; color: #aaa; font-weight: 100; padding: 5px 10px; cursor: pointer; }
-      .city.night { background-color: #04417a; color: #fff; }
-      .city.night i { color: #96c2ec; }
-    </style>
+
 </head>
 <body>
 	<div class="content">
@@ -33,9 +15,19 @@
 		<button id="add">Add zip code</button>
 
 		<div id="info"></div>
-		<ul id="city-list">
-			
-		</ul>
+		<div id="city-list">
+			<div class="city">
+				<div class="icon"><i class="wi wi-owm-800"></i></div>
+		        <div class="description">Clear	</div>
+		        <div class="nums">
+			        <div class="temp">32&deg;</div>
+			        <div class="humidity"><i class="wi wi-humidity"></i> 45</div>
+			    </div>
+		        <div class="rule"></div>
+		        <div class="name">New York</div>
+		        <div id="delete" class="delete">x</div>
+			</div>
+		</div>
 	</div>
 	
 	<script id="template_city" type="text/html">
