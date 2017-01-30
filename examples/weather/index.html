@@ -1,0 +1,199 @@
+<!DOCTYPE HTML>
+<html class="app">
+
+<head>
+    <meta charset="utf-8">
+    <title>Views</title>
+    <link rel="stylesheet" href="styles/css/weather-icons.min.css">
+     <style>
+     	body { font-family: Arial, Helvetica, sans-serif; }
+     	.content { text-align: center; }
+     	h1 { font-weight: normal; }
+     	#input-row1 { display: inline-block; vertical-align: bottom; }
+     	input { width: 150px; padding: 5px; font-size: 18px; border: 1px solid #ededed; color: #aaa; font-weight: 100; }
+		button { display: inline-block; vertical-align: bottom; margin-right: 3px; height: 33px; padding: 0 20px; border-width: 0; background-color: #ededed;  color: #666; text-transform: uppercase;}
+		button:focus, input:focus {outline:0;}
+      .city { position: relative; width: 140px; margin: -1px -1px 0 0; padding: 12px 15px; float: left; background-color:#f6f8f9; border:1px solid #bec4dd;  color: #333; text-align: center; }
+      .name { text-transform: uppercase; font-size: 13px; text-align: left;}
+      .temp { position: absolute; bottom: 0; font-size: 30px; padding: 0px 0; }
+      .description { padding: 10px; text-transform: uppercase;}
+      .humidity { position: absolute; right:0; bottom: 3px; font-size: 16px; }
+      .icon i { font-size: 50px; color:#5c91c3; }
+      .rule { width: 100%; height: 0; border-bottom: 1px solid #bec4dd; margin: 10px 0; }
+      .nums { position: relative; height: 50px; text-align: right; }
+      .delete { position: absolute; top: 0; right: 0px; color: #aaa; font-weight: 100; padding: 5px 10px; cursor: pointer; }
+      .city.night { background-color: #04417a; color: #fff; }
+      .city.night i { color: #96c2ec; }
+    </style>
+</head>
+<body>
+	<div class="content">
+		<h1>Current Weather</h1>
+		<div id="input-row1"> <input type="text"></div>
+		<button id="add">Add zip code</button>
+
+		<div id="info"></div>
+		<ul id="city-list">
+			
+		</ul>
+	</div>
+	
+	<script id="template_city" type="text/html">
+        
+        <div class="icon"><i></i></div>
+        <div class="description">{{description}}</div>
+        <div class="nums">
+	        <div class="temp">{{temp}}&deg;</div>
+	        <div class="humidity"><i class="wi wi-humidity"></i> {{humidity}}</div>
+	    </div>
+        <div class="rule"></div>
+        <div class="name">{{city}}</div>
+        <div id="delete" class="delete">x</div>
+
+  </script>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script type="text/javascript" src="../shared/js/utils.js"></script>
+	<script type="text/javascript" src="../shared/js/events.js"></script>
+	<script type="text/javascript" src="../shared/js/models.js"></script>
+	<script type="text/javascript" src="../shared/js/views.js"></script>
+	<script type="text/javascript" src="../shared/js/mustache.js" ></script>
+	<script type="text/javascript" src="http://underscorejs.org/underscore.js"></script>
+	<script type="text/javascript" src="http://backbonejs.org/backbone.js"></script>
+	<script>
+
+		// Some sample of how to use our new Model class from our framework
+		var WeatherItem = SKFramework.Model.extend({
+				initialize: function(){
+					console.log('hi');
+					console.log(WeatherItem.prototype.initialize);
+					//this.set('status', 0);
+				},
+				setCity: function(_zip){
+					
+				}
+			});
+	
+		var CityView = SKFramework.View.extend({
+			initialize: function(_el, model){
+				this.setElement(_el);
+				this.render = this.render.bind(this);
+				this.setMode = this.setMode.bind(this);
+				this.onDelete = this.onDelete.bind(this);
+				this.model = model;
+				this.state = {
+					mode: 'day'
+				};
+				this.template = document.getElementById('template_city').innerHTML;
+    			this.cityElement = Mustache.render(this.template, this.model._props);
+				this.addListeners();
+				this.setMode();
+	
+			}, 
+			addListeners: function(){
+				$(this.el).on('click', '#delete', this.onDelete); 			
+			},
+			setMode:function(){
+				this.curr = this.model.get('currentTime');
+				this.sr = this.model.get('sunrise');
+				this.ss = this.model.get('sunset');
+				if(this.curr >= this.sr && this.curr <= this.ss){
+					this.state = { mode : 'day' };
+				} else {
+					this.state = { mode : 'night' };
+				}
+				console.log(this.state);
+				return this.state;
+			},
+			onDelete: function(){
+				this.emit('delete', { target: this });
+				var parentEl = this.el.parentNode;
+				parentEl.removeChild(this.el);
+			},
+			render: function(){
+				this.el.innerHTML = this.cityElement;
+				var iconElement = this.el.querySelector('.icon').firstChild;
+				var iconId = this.model.get('id');
+				if(this.state.mode === 'day'){
+					iconElement.className = 'wi wi-owm-' + iconId;
+				}else{
+					iconElement.className = 'wi wi-owm-night-' + iconId;
+					this.el.classList.add("night");
+				}
+				return this.el;
+			}
+		})
+
+		var ListView = SKFramework.View.extend({
+			initialize: function(_el){
+				this.setElement(_el);
+				this.render = this.render.bind(this);
+				this.getCity = this.getCity.bind(this);
+				this.setCity = this.setCity.bind(this);
+				this.onDelete = this.onDelete.bind(this);
+
+				this.cityList = [];
+				this.addListeners();
+			}, 
+			addListeners: function(){
+				$(this.el).on('click', '#add', this.getCity); 			
+			},
+			getCity: function(){
+				var _zip = this.el.querySelector('#input-row1 input').value;
+				$.ajax({
+					   url: 'http://api.openweathermap.org/data/2.5/weather?zip=' + _zip + ',us&units=imperial&appid=952298b2df1ddb1e061db7f67e75b2db',
+					   error: function() {},
+					   dataType: 'json',
+					   success: this.setCity,
+					   type: 'GET'
+					});
+				this.el.querySelector('#input-row1 input').value = '';
+			},
+			setCity: function(data) {
+				var cityname = data.name; 
+				var description = data.weather[0].main;
+				var temp = Math.floor(data.main.temp);
+				var humidity = data.main.humidity;
+				var id = data.weather[0].id;
+				var currentTime = data.dt;
+				var sunrise = data.sys.sunrise;
+				var sunset = data.sys.sunset;
+				this.cityModel = new WeatherItem();
+				this.cityModel.set('city', cityname);
+				this.cityModel.set('description', description);
+				this.cityModel.set('temp', temp);
+				this.cityModel.set('humidity', humidity);
+				this.cityModel.set('id', id);
+				this.cityModel.set('currentTime', currentTime);
+				this.cityModel.set('sunrise', sunrise);
+				this.cityModel.set('sunset', sunset);
+				console.log(this.cityModel);
+				
+				var div = document.createElement('div');
+				div.className = "city";
+				this.itemView = new CityView(div, this.cityModel);
+				this.itemView.on('delete', this.onDelete);
+				this.cityList.push(this.itemView);
+				this.el.querySelector('#city-list').appendChild(this.itemView.render());
+			},
+			onDelete: function(event){
+				var selectedView = event.target;
+				var viewIndex = this.cityList.indexOf(selectedView);
+				this.cityList.splice(viewIndex, 1);
+				console.log(this.cityList);
+			},
+			render: function(){
+				this.el.querySelector('#city-list').innerHTML = '';
+				for(var i=0; i<this.cityList.length; i++){
+						this.el.querySelector('#city-list').appendChild(this.cityList[i].render());		
+				}
+			}
+		})
+
+		var cityViewObj = new ListView(document.body);
+
+	</script>
+
+</body>
+
+</html>
