@@ -4,21 +4,10 @@
 <head>
     <meta charset="utf-8">
     <title>Views</title>
+    <link rel="stylesheet" href="styles/main.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300" rel="stylesheet">
     <style>
-	    .hide{ display: none; }
-	    #status-edit { display: none; }
-
-	    body { font-family: 'Roboto', sans-serif; color: #666; }
-	    .content { width: 400px; margin: 0 auto; padding: 30px; }
-		.input-area { padding-bottom: 30px; }
-		.title-text { padding-bottom: 20px; font-size: 24px; }
-		.input-add { float: left; width: 250px; padding: 5px; font-size: 18px; border: 1px solid #ededed; color: #aaa; font-weight: 100; }
-		button { margin-right: 3px; height: 33px; padding: 0 20px; border-width: 0; background-color: #ededed;  color: #666; text-transform: uppercase;}
-		.list-title { padding-bottom: 10px; font-size: 18px;  text-transform: uppercase; }
-		ul{ padding: 0; }
-		li { padding: 5px 0; list-style: none; }
-		#label-edit { width: 135px; padding: 5px; font-size: 18px; border: 1px solid #ededed; color: #aaa; font-weight: 100;}
+	    
     </style>
 </head>
 
@@ -27,15 +16,20 @@
 		<div class="input-area">
 			<div id="input-row1">
 				<div class="title-text">What do you need to do today?</div>
-				<input class="input-add" type="text">
+				<input class="input-add" type="text"><button id="add">Add</button>
+				<div class="error hide"><sup>*</sup>please enter a task</div>
 			</div>
-			<button id="add">Add</button>
+			
 		</div>
 		<div class="list-area">
-			<div class="list-title">To do </div>
-			<ul id="todo-list"></ul>
-			<div class="list-title">Completed</div>
-			<ul id="todo-list-completed"></ul>
+			<div class="list hide">
+				<div class="list-title">To do </div>
+				<ul id="todo-list"></ul>
+			</div>
+			<div class="list hide">
+				<div class="list-title">Completed</div>
+				<ul id="todo-list-completed"></ul>
+			</div>
 		</div>
 	</div>
 
@@ -85,8 +79,8 @@
 					mode: 'view'
 				};
 				this.templates = { 
-					view: '<span id="label"></span> <input id="status" type="checkbox" /> <button id="edit">Edit</button><button id="delete">Delete</button>',
-					edit: '<input id="label-edit"></span> <input id="status" type="checkbox"> <button id="save">Save</button><button id="delete">Delete</button>'
+					view: '<input class="check" id="status" type="checkbox"> <div id="label"></div>  <button id="edit">Edit</button><button id="delete">Delete</button>',
+					edit: '<input class="check" id="status" type="checkbox"> <input id="label-edit"> <button id="save">Save</button><button id="delete">Delete</button>'
 				};
 				this.addListeners();
 			},
@@ -115,9 +109,9 @@
 				this.render();
 			},
 			onDelete: function(){
-				this.emit('delete', { target: this });
 				var parentEl = this.el.parentNode;
 				parentEl.removeChild(this.el);
+				this.emit('delete', { target: this });
 			},
 			render: function(){
 				if(this.state.mode === 'view'){
@@ -144,45 +138,67 @@
 				this.createOnClick = this.createOnClick.bind(this);
 				this.onDelete = this.onDelete.bind(this);
 				this.render = this.render.bind(this);
+				this.checkListItems = this.checkListItems.bind(this);
+				this.clearError = this.clearError.bind(this);
 				
+				this.listComplete = this.el.querySelector('#todo-list-completed');
+				this.listTodo = this.el.querySelector('#todo-list');
 				this.todoList = [];
 				this.addListeners();
 			},
 			addListeners: function(){
-				$(this.el).on('click', '#add', this.createOnClick); 				
+				$(this.el).on('click', '#add', this.createOnClick); 
+				$(this.el).on('click', '#input-row1 input', this.clearError); 				
 			},
 			createOnClick: function(){
-				// create a model and set it
-				var todoItem1 = new TodoItem();
-				todoItem1.set('label', this.el.querySelector('#input-row1 input').value);
-				this.el.querySelector('#input-row1 input').value = '';
+				if(this.el.querySelector('#input-row1 input').value == '') {
+					this.el.querySelector('.error').classList.remove('hide');
+				}
+				else {
+					// create a model and set it
+					var todoItem1 = new TodoItem();
+				
+					todoItem1.set('label', this.el.querySelector('#input-row1 input').value);
+					this.el.querySelector('#input-row1 input').value = '';
 
-				// create a view, add delete event listener, add to an array of views, render and add to DOM
-				var newListElement = document.createElement('li');
-				this.newView = new MyView(newListElement, todoItem1);
+					// create a view, add delete event listener, add to an array of views, render and add to DOM
+					var newListElement = document.createElement('li');
+					this.newView = new MyView(newListElement, todoItem1);
 
-				this.newView.on('delete', this.onDelete);
-				this.newView.on('statusChange', this.render); 
+					this.newView.on('delete', this.onDelete);
+					this.newView.on('statusChange', this.render); 
 
-				this.todoList.push(this.newView);
-				this.el.querySelector('#todo-list').appendChild(this.newView.render());
+					this.todoList.push(this.newView);
+					this.listTodo.appendChild(this.newView.render());
+					this.checkListItems();
+				}
+			},
+			clearError: function(){
+					this.el.querySelector('.error').classList.add('hide');
 			},
 			onDelete: function(event){
 				var selectedView = event.target;
 				var viewIndex = this.todoList.indexOf(selectedView);
 				this.todoList.splice(viewIndex, 1);
 				console.log(this.todoList);
+				this.checkListItems();
+			},
+			checkListItems: function(){
+				this.listComplete.hasChildNodes()?this.listComplete.parentNode.classList.remove('hide'):this.listComplete.parentNode.classList.add('hide');
+				this.listTodo.hasChildNodes()?this.listTodo.parentNode.classList.remove('hide'):this.listTodo.parentNode.classList.add('hide');
+				
 			},
 			render: function(){
-				this.el.querySelector('#todo-list').innerHTML = '';
+				this.listTodo.innerHTML = '';
 				for(var i=0; i<this.todoList.length; i++){
 					if(this.todoList[i].model.get('status') === 1){
-						this.el.querySelector('#todo-list-completed').appendChild(this.todoList[i].render());	
+						this.listComplete.appendChild(this.todoList[i].render());	
 					}
 					else{
-						this.el.querySelector('#todo-list').appendChild(this.todoList[i].render());	
+						this.listTodo.appendChild(this.todoList[i].render());	
 					}
 				}
+				this.checkListItems();
 			}
 		})
 

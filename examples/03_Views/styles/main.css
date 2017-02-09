@@ -1,0 +1,136 @@
+
+body { 
+	font-family: 'Roboto', sans-serif; 
+	color: #666; 
+}
+.content { 
+	width: 400px; 
+	margin: 0 auto; 
+	padding: 30px; 
+}
+button:focus, input:focus {
+	outline:0;
+}
+.hide {
+	display: none;
+}
+
+.input-area { 
+	padding-bottom: 50px; 
+	text-align: center; 
+}
+.title-text { 
+	padding-bottom: 20px; 
+	font-size: 24px; 
+}
+.input-add { 
+	vertical-align: bottom; 
+	width: 235px; 
+	padding: 5px; 
+	font-family: 'Roboto', sans-serif; 
+	font-size: 18px; 
+	border: 1px solid #dddddd; 
+	color: #666; 
+}
+/*.input-add ~ .error {
+	display: none;
+}
+.input-add:focus ~ .error {
+	display: none;
+}*/
+button { 
+	height: 33px; 
+	width: 75px; 
+	background-color: #ededed;  
+	color: #666; 
+	text-transform: uppercase; 
+	border: 1px solid #dddddd; 
+	margin-left: -1px; 
+	cursor: pointer;
+}
+.error {
+	padding: 20px 0;
+    font-size: 14px;
+    color: #d63e48;
+}
+
+.list-title { 
+	padding-bottom: 6px; 
+	font-size: 18px;  
+	text-transform: uppercase; 
+	border-bottom: 1px solid #ccc;
+}
+ul { 
+	padding: 0 0 20px 0; 
+}
+li { 
+	padding: 5px 0; list-style: none; 
+}
+#label { 
+	display: inline-block; 
+	width: 175px; 
+	padding: 5px; 
+	vertical-align:bottom; 
+	border: 1px solid #fff; 
+	font-size: 18px; 
+}
+#label-edit { 
+	width: 175px; 
+	padding: 5px; 
+	font-family: 'Roboto', sans-serif; 
+	font-size: 18px; 
+	vertical-align:bottom; 
+	border: 1px solid #dddddd; 
+	color:#666; 
+}
+.check {
+	-webkit-appearance: none;
+	position: relative;
+    background-color: #ededed;
+    border: 1px solid #dddddd;
+    padding: 15px;
+    border-radius: 15px;
+    vertical-align: bottom;
+    margin: 0 8px 0 0;
+    cursor: pointer;
+}
+.check:checked:after {
+	content: '';
+    position: absolute;
+    top: 6px;
+    width: 6px;
+    height: 14px;
+    border-bottom: 2px solid #349979;
+    border-right: 2px solid #349979;
+    transform: rotate(35deg);
+    	-o-transform: rotate(35deg);
+    	-ms-transform: rotate(35deg);
+    	-webkit-transform: rotate(35deg);
+    left: 11px;
+}
+
+/* Animations */
+
+li {
+	-webkit-animation: fadeIn .5s; 
+	-moz-animation:    fadeIn .5s; 
+	-o-animation:      fadeIn .5s; 
+	animation:         fadeIn .5s; 
+}
+
+@-webkit-keyframes fadeIn {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+@-moz-keyframes fadeIn {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+@-o-keyframes fadeIn {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes fadeIn {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
